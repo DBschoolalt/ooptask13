@@ -1,0 +1,24 @@
+{
+    "characters": [
+        {
+            "class": "Knight",
+            "name": "Bobby"
+        },
+        {
+            "class": "Knight",
+            "name": "Maestro"
+        },
+        {
+            "class": "Mystic",
+            "name": "Samuel"
+        },
+        {
+            "class": "Creature",
+            "name": "Pineapple"
+        },
+        {
+            "class": "Mystic",
+            "name": "Logberg"
+        }
+    ]
+}  

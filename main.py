@@ -7,6 +7,8 @@ from characters import *
 
 import text
 
+import json
+
 
 class InfraData:
 	__data = {}
@@ -84,6 +86,16 @@ class CLIExecutor():
 		elif command == "listchr":
 			for i in InfraData.Get('game_chrs'):
 				CLIPresenter.Output(i.list())
+
+		elif command == "loadjson":
+			InfraData.Set('game_chrs', [])
+			with open('characters.json', 'r') as file:
+				data = json.load(file)
+			for i in data["characters"]:
+				if i["class"] == 'Knight': InfraData.Get('game_chrs').append(characters.Knight(i["name"]))
+				elif i["class"] == 'Mystic': InfraData.Get('game_chrs').append(characters.Mystic(i["name"]))
+				elif i["class"] == 'Creature': InfraData.Get('game_chrs').append(characters.Creature(i["name"]))
+
 
 		elif command == "startgame":
 			g = game.Game()
