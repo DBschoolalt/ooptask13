@@ -82,6 +82,8 @@ class CLIExecutor():
 				InfraData.Get('game_chrs').append(characters.Mystic(name))
 			elif chrclass == '3':
 				InfraData.Get('game_chrs').append(characters.Creature(name))
+			CLIPresenter.Output(name+' added')
+
 
 		elif command == "listchr":
 			for i in InfraData.Get('game_chrs'):
@@ -95,9 +97,30 @@ class CLIExecutor():
 				if i["class"] == 'Knight': InfraData.Get('game_chrs').append(characters.Knight(i["name"]))
 				elif i["class"] == 'Mystic': InfraData.Get('game_chrs').append(characters.Mystic(i["name"]))
 				elif i["class"] == 'Creature': InfraData.Get('game_chrs').append(characters.Creature(i["name"]))
+				CLIPresenter.Output(i["name"]+' loaded')
 
 
-		elif command == "startgame":
+		elif command == "play":
+			g = game.Game()
+			g.new(InfraData.Get('game_chrs'))
+			while g.isDone() == False:
+				command = CLIPresenter.Input('(next/list/save/load) > ')
+				if command in ["n", "next"]:
+					g.turn()
+				elif command in ["list"]:
+					g.list()
+				elif command in ["s", "save"]:
+					with open('gamestate.json', 'w') as file:
+						json.dump(g.getState(), file)
+					CLIPresenter.Output('state saved!')
+				elif command in ["l", "load"]:
+					with open('gamestate.json', 'r') as file:
+						g.setState(json.load(file))
+					CLIPresenter.Output('state loaded!')
+				else:
+					CLIPresenter.Output('invalid command')
+
+		elif command == "autoplay":
 			g = game.Game()
 			g.new(InfraData.Get('game_chrs'))
 			g.play()

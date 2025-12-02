@@ -9,10 +9,10 @@ class Character:
         self.__hp = hp
         self.__dmg = dmg
         self.__heal_hp = heal_hp
-        Logger.print(f"{self.__name} the {self.class_name} joins the game! (hp:{self.max_hp}, dmg:{self.__dmg}, heal:{self.__heal_hp})")
+        #Logger.print(f"{self.__name} the {self.class_name} joins the game! (hp:{self.max_hp}, dmg:{self.__dmg}, heal:{self.__heal_hp})")
 
     def list(self):
-        return f"{self.__name} the {self.class_name} (hp:{self.max_hp}, dmg:{self.__dmg}, heal:{self.__heal_hp})"
+        return f"{self.__name} the {self.class_name} (hp:{self.__hp}/{self.__max_hp}, dmg:{self.__dmg}, heal:{self.__heal_hp})"
 
     def hit(self, opponent):
         Logger.print(f"{self.__name} hits {opponent.name};   {opponent.name} receives {self.__dmg} damage ({opponent.hp-self.__dmg}/{opponent.max_hp})")
@@ -33,6 +33,12 @@ class Character:
             self.__hp = self.__max_hp
         Logger.print(f"{self.__name} heals by {self.__heal_hp} ({self.__hp}/{self.__max_hp})")
 
+    def setHP(self, hp):
+        self.__hp = hp
+
+    def toDict(self):
+        return {'name': self.__name, 'class': self.class_name, 'hp': self.__hp}
+
     @property
     def name(self):
         return self.__name
@@ -44,6 +50,8 @@ class Character:
     @property
     def max_hp(self):
         return self.__max_hp
+
+     
 
 
 class Knight(Character):
