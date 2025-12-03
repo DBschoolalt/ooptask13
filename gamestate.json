@@ -1,1 +1,1 @@
-{"turn": 8, "alive": [{"name": "Bobby", "class": "knight", "hp": 5}, {"name": "Samuel", "class": "mystic", "hp": 6}, {"name": "Pineapple", "class": "creature", "hp": 43}]}
+{"turn": 0, "alive": [{"name": "Bobby", "class": "knight", "hp": 30}, {"name": "Maestro", "class": "knight", "hp": 30}, {"name": "Samuel", "class": "mystic", "hp": 20}, {"name": "Pineapple", "class": "creature", "hp": 60}, {"name": "Logberg", "class": "mystic", "hp": 20}]}

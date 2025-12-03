@@ -1,9 +1,7 @@
 import sys
 del sys.argv[0]
 
-import characters
-
-from characters import *
+import game
 
 import text
 
@@ -28,13 +26,12 @@ class InfraData:
 
 	@staticmethod
 	def Remove(key):
-		InfraData.__data.pop(key)
+		if (key in InfraData.__data):
+			InfraData.__data.pop(key)
 
 	@staticmethod
 	def Clear():
 		InfraData.__data.clear()
-
-
 
 class CLIParser:
 	@staticmethod
@@ -68,104 +65,50 @@ class CLIPresenter():
 	def Output(text):
 		print(text)
 
+
+InfraData.Set('game_chrs', [])
+
 class CLIExecutor():
-	presenter = CLIPresenter()
-	data = InfraData()
 	@staticmethod
 	def Execute(command, args, opts):
+		CLIPresenter.Output('')
 		if command == "newchr":
-			name = CLIPresenter.Input('Character name: ')
-			chrclass = CLIPresenter.Input('Select class (1=Knight, 2=Mystic, 3=Creature): ')
-			if chrclass == '1':
-				InfraData.Get('game_chrs').append(characters.Knight(name))
-			elif chrclass == '2':
-				InfraData.Get('game_chrs').append(characters.Mystic(name))
-			elif chrclass == '3':
-				InfraData.Get('game_chrs').append(characters.Creature(name))
-			CLIPresenter.Output(name+' added')
-
-
-		elif command == "listchr":
-			for i in InfraData.Get('game_chrs'):
-				CLIPresenter.Output(i.list())
+			InfraData.Get('game_chrs').append({"name": str(args[0]), "class": str(args[1]) } )
+			CLIPresenter.Output(str(args[0])+' added')
+			return 
 
 		elif command == "loadjson":
+			strin = ''
 			InfraData.Set('game_chrs', [])
 			with open('characters.json', 'r') as file:
 				data = json.load(file)
 			for i in data["characters"]:
-				if i["class"] == 'Knight': InfraData.Get('game_chrs').append(characters.Knight(i["name"]))
-				elif i["class"] == 'Mystic': InfraData.Get('game_chrs').append(characters.Mystic(i["name"]))
-				elif i["class"] == 'Creature': InfraData.Get('game_chrs').append(characters.Creature(i["name"]))
+				InfraData.Get('game_chrs').append({"name": i["name"], "class": i["class"]})
 				CLIPresenter.Output(i["name"]+' loaded')
+				strin += i["name"]+' loaded'+'\n'
+
+			return(strin)
 
 
-		elif command == "play":
-			g = game.Game()
-			g.new(InfraData.Get('game_chrs'))
-			while g.isDone() == False:
-				command = CLIPresenter.Input('(next/list/save/load) > ')
-				if command in ["n", "next"]:
-					g.turn()
-				elif command in ["list"]:
-					g.list()
-				elif command in ["s", "save"]:
-					with open('gamestate.json', 'w') as file:
-						json.dump(g.getState(), file)
-					CLIPresenter.Output('state saved!')
-				elif command in ["l", "load"]:
-					with open('gamestate.json', 'r') as file:
-						g.setState(json.load(file))
-					CLIPresenter.Output('state loaded!')
-				else:
-					CLIPresenter.Output('invalid command')
 
-		elif command == "autoplay":
-			g = game.Game()
-			g.new(InfraData.Get('game_chrs'))
-			g.play()
+		elif command == "newgame":
+			InfraData.Remove('thegame')
+			InfraData.Set('thegame', game.Game())
+			InfraData.Get('thegame').new(InfraData.Get('game_chrs'))
+		elif command == "nextturn":
+			return InfraData.Get('thegame').turn()
 
-		elif command == "newdoc":
+		elif command == "loadgame":
+			with open('gamestate.json', 'r') as file:
+				InfraData.Get('thegame').setState(json.load(file))
+		elif command == "savegame":
+			with open('gamestate.json', 'w') as file:
+				json.dump(InfraData.Get('thegame').getState(), file)
 
-			InfraData.Set('doc', text.DocumentBuilder(args[0]))
-
-		elif command == "addp":
-			if not InfraData.Exists('doc'):
-				CLIPresenter.Output('no document!')
-				return
-			InfraData.Get('doc').addParagraph(args[0])
-
-		elif command == "addh":
-			if not InfraData.Exists('doc'):
-				CLIPresenter.Output('no document!')
-				return
-			InfraData.Get('doc').addHeading(args[0])
-
-		elif command == "docup":
-			if not InfraData.Exists('doc'):
-				CLIPresenter.Output('no document!')
-				return
-			InfraData.Get('doc').Up()
-
-
-		elif command == "doc":
-			if not InfraData.Exists('doc'):
-				CLIPresenter.Output('no document!')
-				return
-			CLIPresenter.Output(InfraData.Get('doc').ToString())
-
+		elif command == "listgame":
+			return InfraData.Get('thegame').list()
 
 		else:
 			CLIPresenter.Output('invalid command!')
 
 
-p = CLIParser()
-e = CLIExecutor()
-pr = CLIPresenter()
-
-InfraData.Set('game_chrs', [])
-
-while True:
-	inp = pr.Input('> ')
-	command, args, opts = p.Parse(inp.split())
-	e.Execute(command, args, opts)

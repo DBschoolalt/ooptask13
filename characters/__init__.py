@@ -1,1 +1,0 @@
-__all__ = ['characters', 'game', 'logger']
